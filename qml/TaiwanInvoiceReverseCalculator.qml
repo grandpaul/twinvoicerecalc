@@ -148,8 +148,8 @@ Rectangle {
             }
 
             property var bestAnswer: null
-            property int bestAnswerMin: Infinity
-            property int bestAnswerMinSum: Infinity
+            property var bestAnswerMin: Infinity
+            property var bestAnswerMinSum: Infinity
             onClicked: {
                 var anso=new Array(itemTable.count);
                 var ans=new Array(itemTable.count);
