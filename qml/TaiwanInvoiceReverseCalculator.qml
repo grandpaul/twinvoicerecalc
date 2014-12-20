@@ -117,352 +117,218 @@ Rectangle {
         height: (181.47 / 500.0) * parent.height
         source: "../image/stamp.png"
         states: [
-	    State {
-	        name: "canbefixed"
-		when: !total.isPriceSame && Math.abs(parseInt(total.text)-parseInt(itemTotalPriceSum.text)-parseInt(itemTax.text)) <= 10
+            State {
+                name: "canbefixed"
+                when: !total.isPriceSame && Math.abs(parseInt(total.text)-parseInt(itemTotalPriceSum.text)-parseInt(itemTax.text)) <= 10
         PropertyChanges { target: stampImage; visible: true; source: "../image/molumen_ussr_calculator.png" }
-		PropertyChanges { target: stampMouseArea; enabled: true }
+                PropertyChanges { target: stampMouseArea; enabled: true }
             },
             State {
                 name: "nonverified"
                 when: !total.isPriceSame
                 PropertyChanges { target: stampImage; visible: false }
-		PropertyChanges { target: stampMouseArea; enabled: false }
+                PropertyChanges { target: stampMouseArea; enabled: false }
             },
             State {
                 name: "verified"
                 when: total.isPriceSame
                 PropertyChanges { target: stampImage; visible: true; source: "../image/stamp.png" }
-		PropertyChanges { target: stampMouseArea; enabled: false }
+                PropertyChanges { target: stampMouseArea; enabled: false }
             }
         ]
-	MouseArea {
-	    id: stampMouseArea
+        MouseArea {
+            id: stampMouseArea
             anchors.fill: parent
-	    enabled: false
+            enabled: false
 
             function truncate(number) {
                 return x > 0
                 ? Math.floor(number)
-	        : Math.ceil(number);
+                : Math.ceil(number);
             }
 
             property var bestAnswer: null
-	    property int bestAnswerMin: 10000
-	    property int bestAnswerMinSum: 10000
-	    onClicked: {
-	        var anso=[-1,-1,-1,-1,-1];
-	        var ans=[0,0,0,0,0];
-		var itemunitprices=[itemUnitPrice1, itemUnitPrice2, itemUnitPrice3, itemUnitPrice4, itemUnitPrice5];
-		var itemcounts=[parseInt(itemCount1.text), parseInt(itemCount2.text), parseInt(itemCount3.text), parseInt(itemCount4.text), parseInt(itemCount5.text)];
-		bestAnswer = null;
-		bestAnswerMin = 10000;
-		bestAnswerMinSum = 10000;
-		for (var i=0; i>=0; ) {
-		    if (i>=5) {
-		        // check if valid
-			var vsum=0;
-			for (var j=0; j<5; j++) {
-			    if ( !itemcounts[j] ) {
-			        continue;
-			    }
-			    if ( !itemunitprices[j].text) {
-			        continue;
-			    }
-			    vsum += (parseInt(itemunitprices[j].text)+ans[j])*itemcounts[j];
-			}
-			vsum = vsum + Math.round(vsum*vat);
-			if (vsum == parseInt(total.text)) {
-			    // valid
-			    var nowMaxABS=0;
-			    var nowSumABS=0;
-			    for (var j=0; j<5; j++) {
-			        if (Math.abs(ans[j]) > nowMaxABS) {
-				    nowMaxABS = Math.abs(ans[j]);
-				}
-				nowSumABS += Math.abs(ans[j]);
-			    }
-			    if (nowMaxABS < bestAnswerMin) {
-			        bestAnswerMin = nowMaxABS;
-				bestAnswerMinSum = nowSumABS;
-				bestAnswer = ans.slice(0);
-			    } else if (nowMaxABS <= bestAnswerMin && nowSumABS < bestAnswerMinSum) {
-			        bestAnswerMin = nowMaxABS;
-				bestAnswerMinSum = nowSumABS;
-				bestAnswer = ans.slice(0);
-			    }
-			}
-			i--;
-			continue;
-		    }
-		    anso[i]++;
-		    if (anso[i]>20) {
-		        anso[i]=-1;
-			ans[i]=0;
-		        i--;
-			continue;
-		    }
-		    ans[i] = truncate(((anso[i]%2)*2-1)*((anso[i]+1)/2));
-		    if (Math.abs(ans[i]) > bestAnswerMin) {
-		        anso[i]=-1;
-			ans[i]=0;
-			i--;
-		        continue;
-		    }
-		    var sum001=0;
-		    for (var j=0; j<=i; j++) {
-		        sum001 += Math.abs(ans[j]);
-		    }
-		    if (sum001 > bestAnswerMinSum) {
-		        anso[i]=-1;
-			ans[i]=0;
-			i--;
-			continue;
-		    }
-		    if ( (!(itemcounts[i])) && ans[i] != 0) {
-		        anso[i]=-1;
-			ans[i]=0;
-			i--;
-		        continue;
-		    }
-		    if ( (itemunitprices[i].text) && parseInt(itemunitprices[i].text)+ans[i] <= 0) {
-			continue;
-		    }
-		    i++;
-		}
-		if (bestAnswer) {
-		    for (var i=0; i<5; i++) {
-		        if (!itemunitprices[i].text) {
-			    continue;
-			}
-			if (!bestAnswer[i]) {
-			    continue;
-			}
-		        itemunitprices[i].text = parseInt(itemunitprices[i].text) + bestAnswer[i];
-		    }
-		}
-	    }
-	}
-    }
-    
-    TextInput {
-        id: itemCount1
-        x: 0.2975 * parent.width
-        y: 0.358 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
+            property int bestAnswerMin: 100000
+            property int bestAnswerMinSum: 100000
+            onClicked: {
+                var anso=new Array(itemTable.count);
+                var ans=new Array(itemTable.count);
+                var itemunitprices = new Array(itemTable.count);
+                var itemcounts = new Array(itemTable.count);
+                for (var i=0; i<anso.length; i++) {
+                    anso[i]=-1;
+                }
+                for (var i=0; i<ans.length; i++) {
+                    ans[i]=0;
+                }
+                for (var i=0; i<itemunitprices.length; i++) {
+                    itemunitprices[i] = itemTable.itemAt(i).itemUnitPrice;
+                }
+                for (var i=0; i<itemcounts.length; i++) {
+                    itemcounts[i] = parseInt(itemTable.itemAt(i).itemCount.text);
+                }
 
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    TextInput {
-        id: itemUnitPrice1
-        x: 0.397 * parent.width
-        y: 0.358 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    Text {
-        id: itemTotalPrice1
-        x: 0.49625 * parent.width
-        y: 0.358 * parent.height
-        width: 0.16875 * parent.width
-        height: 0.040 * parent.height
-
-        text: {
-            if (!(itemUnitPrice1.text) || (!itemCount1.text)) {
-                return "";
-            } else {
-                return itemUnitPrice1.text * itemCount1.text;
+                bestAnswer = null;
+                bestAnswerMin = 100000;
+                bestAnswerMinSum = 100000;
+                for (var i=0; i>=0; ) {
+                    if (i>=ans.length) {
+                        // check if valid
+                        var vsum=0;
+                        for (var j=0; j<itemcounts.length; j++) {
+                            if ( !itemcounts[j] ) {
+                                continue;
+                            }
+                            if ( !itemunitprices[j].text) {
+                                continue;
+                            }
+                            vsum += (parseInt(itemunitprices[j].text)+ans[j])*itemcounts[j];
+                        }
+                        vsum = vsum + Math.round(vsum*vat);
+                        if (vsum == parseInt(total.text)) {
+                            // valid
+                            var nowMaxABS=0;
+                            var nowSumABS=0;
+                            for (var j=0; j<ans.length; j++) {
+                                if (Math.abs(ans[j]) > nowMaxABS) {
+                                    nowMaxABS = Math.abs(ans[j]);
+                                }
+                                nowSumABS += Math.abs(ans[j]);
+                            }
+                            if (nowMaxABS < bestAnswerMin) {
+                                bestAnswerMin = nowMaxABS;
+                                bestAnswerMinSum = nowSumABS;
+                                bestAnswer = ans.slice(0);
+                            } else if (nowMaxABS <= bestAnswerMin && nowSumABS < bestAnswerMinSum) {
+                                bestAnswerMin = nowMaxABS;
+                                bestAnswerMinSum = nowSumABS;
+                                bestAnswer = ans.slice(0);
+                            }
+                        }
+                        i--;
+                        continue;
+                    }
+                    anso[i]++;
+                    if (anso[i]>20) {
+                        anso[i]=-1;
+                        ans[i]=0;
+                        i--;
+                        continue;
+                    }
+                    ans[i] = truncate(((anso[i]%2)*2-1)*((anso[i]+1)/2));
+                    if (Math.abs(ans[i]) > bestAnswerMin) {
+                        anso[i]=-1;
+                        ans[i]=0;
+                        i--;
+                        continue;
+                    }
+                    var sum001=0;
+                    for (var j=0; j<=i; j++) {
+                        sum001 += Math.abs(ans[j]);
+                    }
+                    if (sum001 > bestAnswerMinSum) {
+                        anso[i]=-1;
+                        ans[i]=0;
+                        i--;
+                        continue;
+                    }
+                    if ( (!(itemcounts[i])) && ans[i] != 0) {
+                        anso[i]=-1;
+                        ans[i]=0;
+                        i--;
+                        continue;
+                    }
+                    if ( (itemunitprices[i].text) && parseInt(itemunitprices[i].text)+ans[i] <= 0) {
+                        continue;
+                    }
+                    i++;
+                }
+                if (bestAnswer) {
+                    for (var i=0; i<bestAnswer.length; i++) {
+                        if (!itemunitprices[i].text) {
+                            continue;
+                        }
+                        if (!bestAnswer[i]) {
+                            continue;
+                        }
+                        itemunitprices[i].text = parseInt(itemunitprices[i].text) + bestAnswer[i];
+                    }
+                }
             }
         }
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
     }
 
-    TextInput {
-        id: itemCount2
-        x: 0.2975 * parent.width
-        y: 0.417 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
+    Repeater {
+        id: itemTable
+        model: [
+                   { y: 0.358 },
+                   { y: 0.417 },
+                   { y: 0.484 },
+                   { y: 0.546 },
+                   { y: 0.606 }
+               ]
+        delegate: Item {
+            id: itemDelegate
+            anchors.fill: parent
+            property var itemCount: itemCount1
+            property var itemUnitPrice: itemUnitPrice1
+            property var itemTotalPrice: itemTotalPrice1
 
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
+            TextInput {
+                id: itemName1
+                x: 0.05125 * parent.width
+                y: modelData.y * parent.height
+                width: 0.239 * parent.width
+                height: 0.040 * parent.height
 
-    TextInput {
-        id: itemUnitPrice2
-        x: 0.397 * parent.width
-        y: 0.417 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
+                font.pixelSize: Math.min(width, height)
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+            }
 
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
+            TextInput {
+                id: itemCount1
+                x: 0.2975 * parent.width
+                y: modelData.y * parent.height
+                width: 0.0875 * parent.width
+                height: 0.040 * parent.height
 
-    Text {
-        id: itemTotalPrice2
-        x: 0.49625 * parent.width
-        y: 0.417 * parent.height
-        width: 0.16875 * parent.width
-        height: 0.040 * parent.height
+                font.pixelSize: Math.min(width, height)
+                horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignVCenter
+            }
 
-        text: {
-            if (!(itemUnitPrice2.text) || (!itemCount2.text)) {
-                return "";
-            } else {
-                return itemUnitPrice2.text * itemCount2.text;
+            TextInput {
+                id: itemUnitPrice1
+                x: 0.397 * parent.width
+                y: modelData.y * parent.height
+                width: 0.0875 * parent.width
+                height: 0.040 * parent.height
+
+                font.pixelSize: Math.min(width, height)
+                horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            Text {
+                id: itemTotalPrice1
+                x: 0.49625 * parent.width
+                y: modelData.y * parent.height
+                width: 0.16875 * parent.width
+                height: 0.040 * parent.height
+
+                text: {
+                    if (!(itemUnitPrice1.text) || (!itemCount1.text)) {
+                        return "";
+                    } else {
+                        return itemUnitPrice1.text * itemCount1.text;
+                    }
+                }
+                font.pixelSize: Math.min(width, height)
+                horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignVCenter
             }
         }
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    TextInput {
-        id: itemCount3
-        x: 0.2975 * parent.width
-        y: 0.484 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    TextInput {
-        id: itemUnitPrice3
-        x: 0.397 * parent.width
-        y: 0.484 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    Text {
-        id: itemTotalPrice3
-        x: 0.49625 * parent.width
-        y: 0.484 * parent.height
-        width: 0.16875 * parent.width
-        height: 0.040 * parent.height
-
-        text: {
-            if (!(itemUnitPrice3.text) || (!itemCount3.text)) {
-                return "";
-            } else {
-                return itemUnitPrice3.text * itemCount3.text;
-            }
-        }
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    TextInput {
-        id: itemCount4
-        x: 0.2975 * parent.width
-        y: 0.546 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    TextInput {
-        id: itemUnitPrice4
-        x: 0.397 * parent.width
-        y: 0.546 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    Text {
-        id: itemTotalPrice4
-        x: 0.49625 * parent.width
-        y: 0.546 * parent.height
-        width: 0.16875 * parent.width
-        height: 0.040 * parent.height
-
-        text: {
-            if (!(itemUnitPrice4.text) || (!itemCount4.text)) {
-                return "";
-            } else {
-                return itemUnitPrice4.text * itemCount4.text;
-            }
-        }
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    TextInput {
-        id: itemCount5
-        x: 0.2975 * parent.width
-        y: 0.606 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    TextInput {
-        id: itemUnitPrice5
-        x: 0.397 * parent.width
-        y: 0.606 * parent.height
-        width: 0.0875 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
-    }
-
-    Text {
-        id: itemTotalPrice5
-        x: 0.49625 * parent.width
-        y: 0.606 * parent.height
-        width: 0.16875 * parent.width
-        height: 0.040 * parent.height
-
-        text: {
-            if (!(itemUnitPrice5.text) || (!itemCount5.text)) {
-                return "";
-            } else {
-                return itemUnitPrice5.text * itemCount5.text;
-            }
-        }
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignVCenter
     }
 
     Text {
@@ -474,22 +340,14 @@ Rectangle {
 
         text: {
             var sum=0;
-            if (itemTotalPrice1.text !== "") {
-                sum = sum + parseInt(itemTotalPrice1.text);
-            } else {
-                return "";
-            }
-            if (itemTotalPrice2.text != "") {
-                sum = sum + parseInt(itemTotalPrice2.text);
-            }
-            if (itemTotalPrice3.text !== "") {
-                sum = sum + parseInt(itemTotalPrice3.text);
-            }
-            if (itemTotalPrice4.text !== "") {
-                sum = sum + parseInt(itemTotalPrice4.text);
-            }
-            if (itemTotalPrice5.text !== "") {
-                sum = sum + parseInt(itemTotalPrice5.text);
+            for (var i=0; i<itemTable.count; i++) {
+                var item = itemTable.itemAt(i);
+
+                if (item.itemTotalPrice.text !== "") {
+                    sum = sum + parseInt(item.itemTotalPrice.text);
+                } else if (i<=0) {
+                    return "";
+                }
             }
             return sum;
         }
@@ -597,8 +455,8 @@ Rectangle {
         y: 0.880 * parent.height
         width: 0.529 * parent.width
         height: 0.0025 * parent.height
-	color: "black"
-	visible: false
+        color: "black"
+        visible: false
         states: [
             State {
                 name: "100000000"
@@ -650,69 +508,17 @@ Rectangle {
                 when: parseInt(total.text) >= 0
                 PropertyChanges { target: totalLine1; visible: true; width: 0.529 * 9.0 / 9.0 * parent.width }
             }
-	]
+        ]
     }
 
     Rectangle {
         id: totalLine2
-        x: 0.140 * parent.width
+        anchors.left: totalLine1.left
+        anchors.right: totalLine1.right
         y: 0.890 * parent.height
-        width: 0.529 * parent.width
-        height: 0.0025 * parent.height
-	color: "black"
-	visible: false
-        states: [
-            State {
-                name: "100000000"
-                when: parseInt(total.text) >= 100000000
-                PropertyChanges { target: totalLine2; visible: false}
-            },
-            State {
-                name: "10000000"
-                when: parseInt(total.text) >= 10000000
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 1.0 / 9.0 * parent.width }
-            },
-            State {
-                name: "1000000"
-                when: parseInt(total.text) >= 1000000
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 2.0 / 9.0 * parent.width }
-            },
-            State {
-                name: "100000"
-                when: parseInt(total.text) >= 100000
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 3.0 / 9.0 * parent.width }
-            },
-            State {
-                name: "10000"
-                when: parseInt(total.text) >= 10000
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 4.0 / 9.0 * parent.width }
-            },
-            State {
-                name: "1000"
-                when: parseInt(total.text) >= 1000
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 5.0 / 9.0 * parent.width }
-            },
-            State {
-                name: "100"
-                when: parseInt(total.text) >= 100
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 6.0 / 9.0 * parent.width }
-            },
-            State {
-                name: "10"
-                when: parseInt(total.text) >= 10
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 7.0 / 9.0 * parent.width }
-            },
-            State {
-                name: "1"
-                when: parseInt(total.text) >= 1
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 8.0 / 9.0 * parent.width }
-            },
-            State {
-                name: "0"
-                when: parseInt(total.text) >= 0
-                PropertyChanges { target: totalLine2; visible: true; width: 0.529 * 9.0 / 9.0 * parent.width }
-            }
-	]
+        height: totalLine1.height
+        color: "black"
+        visible: totalLine1.visible
     }
 
     Text {
@@ -728,61 +534,7 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
     }
-    TextInput {
-        id: itemName1
-        x: 0.05125 * parent.width
-        y: 0.358 * parent.height
-        width: 0.239 * parent.width
-        height: 0.040 * parent.height
 
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignVCenter
-    }
-    TextInput {
-        id: itemName2
-        x: 0.05125 * parent.width
-        y: 0.417 * parent.height
-        width: 0.239 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignVCenter
-    }
-    TextInput {
-        id: itemName3
-        x: 0.05125 * parent.width
-        y: 0.484 * parent.height
-        width: 0.239 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignVCenter
-    }
-    TextInput {
-        id: itemName4
-        x: 0.05125 * parent.width
-        y: 0.546 * parent.height
-        width: 0.239 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignVCenter
-    }
-    TextInput {
-        id: itemName5
-        x: 0.05125 * parent.width
-        y: 0.606 * parent.height
-        width: 0.239 * parent.width
-        height: 0.040 * parent.height
-
-        font.pixelSize: Math.min(width, height)
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignVCenter
-    }
     TextInput {
         id: title
         x: 0.155 * parent.width
@@ -794,6 +546,4 @@ Rectangle {
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
     }
-
 }
-
