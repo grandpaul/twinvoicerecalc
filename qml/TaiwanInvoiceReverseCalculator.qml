@@ -16,15 +16,13 @@
 
 import QtQuick 2.0
 
-Rectangle {
+Image {
     id: root
-    
     property real vat: 0.05
+    source: "../image/background.jpg"
 
-    Image {
-        anchors.fill: parent
-        source: "../image/background.jpg"
-    }
+    width: 800
+    height: 500
 
     MouseArea {
         enabled: false
@@ -261,11 +259,11 @@ Rectangle {
     Repeater {
         id: itemTable
         model: [
-                   { y: 0.358 },
-                   { y: 0.417 },
-                   { y: 0.484 },
-                   { y: 0.546 },
-                   { y: 0.606 }
+                   { y: 0.350 },
+                   { y: 0.411 },
+                   { y: 0.473 },
+                   { y: 0.535 },
+                   { y: 0.597 }
                ]
         delegate: Item {
             id: itemDelegate
@@ -279,9 +277,9 @@ Rectangle {
                 x: 0.05125 * parent.width
                 y: modelData.y * parent.height
                 width: 0.239 * parent.width
-                height: 0.040 * parent.height
+                height: 0.055 * parent.height
 
-                font.pixelSize: Math.min(width, height)
+                font.pixelSize: 0.7 * Math.min(width, height)
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
             }
@@ -291,9 +289,9 @@ Rectangle {
                 x: 0.2975 * parent.width
                 y: modelData.y * parent.height
                 width: 0.0875 * parent.width
-                height: 0.040 * parent.height
+                height: 0.055 * parent.height
 
-                font.pixelSize: Math.min(width, height)
+                font.pixelSize: 0.7 * Math.min(width, height)
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
             }
@@ -303,9 +301,9 @@ Rectangle {
                 x: 0.397 * parent.width
                 y: modelData.y * parent.height
                 width: 0.0875 * parent.width
-                height: 0.040 * parent.height
+                height: 0.055 * parent.height
 
-                font.pixelSize: Math.min(width, height)
+                font.pixelSize: 0.7 * Math.min(width, height)
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
             }
@@ -315,7 +313,7 @@ Rectangle {
                 x: 0.49625 * parent.width
                 y: modelData.y * parent.height
                 width: 0.16875 * parent.width
-                height: 0.040 * parent.height
+                height: 0.055 * parent.height
 
                 text: {
                     if (!(itemUnitPrice1.text) || (!itemCount1.text)) {
@@ -324,7 +322,7 @@ Rectangle {
                         return itemUnitPrice1.text * itemCount1.text;
                     }
                 }
-                font.pixelSize: Math.min(width, height)
+                font.pixelSize: 0.7 * Math.min(width, height)
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
             }
@@ -334,9 +332,9 @@ Rectangle {
     Text {
         id: itemTotalPriceSum
         x: 0.49625 * parent.width
-        y: 0.666 * parent.height
+        y: 0.659 * parent.height
         width: 0.16875 * parent.width
-        height: 0.040 * parent.height
+        height: 0.055 * parent.height
 
         text: {
             var sum=0;
@@ -352,7 +350,7 @@ Rectangle {
             return sum;
         }
 
-        font.pixelSize: Math.min(width, height)
+        font.pixelSize: 0.7 * Math.min(width, height)
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
     }
@@ -360,9 +358,9 @@ Rectangle {
     Text {
         id: itemTax
         x: 0.49625 * parent.width
-        y: 0.742 * parent.height
+        y: 0.73 * parent.height
         width: 0.16875 * parent.width
-        height: 0.040 * parent.height
+        height: 0.055 * parent.height
 
         text: {
             var tax = 0.0;
@@ -374,7 +372,7 @@ Rectangle {
             return tax;
         }
 
-        font.pixelSize: Math.min(width, height)
+        font.pixelSize: 0.7 * Math.min(width, height)
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
     }
@@ -382,12 +380,12 @@ Rectangle {
     TextInput {
         id: total
         x: 0.4975 * parent.width
-        y: 0.810 * parent.height
+        y: 0.794 * parent.height
         width: 0.16875 * parent.width
-        height: 0.04 * parent.height
+        height: 0.055 * parent.height
         maximumLength: 9
 
-        font.pixelSize: Math.min(width, height)
+        font.pixelSize: 0.7 * Math.min(width, height)
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
 
@@ -430,20 +428,20 @@ Rectangle {
 
     Repeater {
         model: [
-                   { x: 0.140,  digit: 8 },
-                   { x: 0.200,  digit: 7 },
-                   { x: 0.260,  digit: 6 },
-                   { x: 0.318,  digit: 5 },
-                   { x: 0.3775, digit: 4 },
-                   { x: 0.4325, digit: 3 },
-                   { x: 0.491,  digit: 2 },
-                   { x: 0.550,  digit: 1 },
-                   { x: 0.610,  digit: 0 }
+                   { x: 0.144,  digit: 8 },
+                   { x: 0.204,  digit: 7 },
+                   { x: 0.264,  digit: 6 },
+                   { x: 0.322,  digit: 5 },
+                   { x: 0.3815, digit: 4 },
+                   { x: 0.4365, digit: 3 },
+                   { x: 0.495,  digit: 2 },
+                   { x: 0.554,  digit: 1 },
+                   { x: 0.614,  digit: 0 }
                ]
         delegate: ChineseCapitalNumberText {
             x: modelData.x * parent.width
             y: 0.866 * parent.height
-            width: 0.036 * parent.width
+            width: 0.028 * parent.width
             height: 0.036 * parent.height
             digit: getDigit(total.text, intPow(10,modelData.digit));
         }
@@ -524,7 +522,7 @@ Rectangle {
     Text {
         id: taxCheck
         x: 0.26625 * parent.width
-        y: 0.758 * parent.height
+        y: 0.755 * parent.height
         width: 0.0225 * parent.width
         height: 0.036 * parent.height
 
