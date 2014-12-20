@@ -23,7 +23,7 @@ Rectangle {
 
     Image {
         anchors.fill: parent
-        source: "../image/background.png"
+        source: "../image/background.jpg"
     }
 
     MouseArea {
