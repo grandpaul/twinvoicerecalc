@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qml/TaiwanInvoiceReverseCalculator.qml</file>
+        <file>qml/ChineseCapitalNumberText.qml</file>
+        <file>image/background.png</file>
+        <file>image/molumen_ussr_calculator.png</file>
+        <file>image/stamp.png</file>
+    </qresource>
+</RCC>
