@@ -148,8 +148,8 @@ Rectangle {
             }
 
             property var bestAnswer: null
-            property int bestAnswerMin: 100000
-            property int bestAnswerMinSum: 100000
+            property int bestAnswerMin: Infinity
+            property int bestAnswerMinSum: Infinity
             onClicked: {
                 var anso=new Array(itemTable.count);
                 var ans=new Array(itemTable.count);
@@ -169,8 +169,8 @@ Rectangle {
                 }
 
                 bestAnswer = null;
-                bestAnswerMin = 100000;
-                bestAnswerMinSum = 100000;
+                bestAnswerMin = Infinity;
+                bestAnswerMinSum = Infinity;
                 for (var i=0; i>=0; ) {
                     if (i>=ans.length) {
                         // check if valid
