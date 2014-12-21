@@ -19,6 +19,7 @@ import QtQuick 2.0
 Image {
     id: root
     property real vat: 0.05
+    property bool forwardMode: true
     source: "../image/background.jpg"
 
     width: 800
@@ -81,6 +82,7 @@ Image {
         y: 0.36 * parent.height
         width: 0.26 * parent.width
         height: 0.044 * parent.height
+	visible: !root.forwardMode
 
         text: ""
         
@@ -415,6 +417,18 @@ Image {
             return true;
         }
 
+        states: [
+            State {
+                name: "forward"
+                when: root.forwardMode
+                PropertyChanges { target: total; readOnly: true; text: itemTotalPriceSum.text != "" && itemTax.text != "" ? parseInt(itemTotalPriceSum.text) + parseInt(itemTax.text) : "" }
+            },
+            State {
+                name: "backward"
+                when: !root.forwardMode
+                PropertyChanges { target: total; readOnly: false; text: "" }
+            }
+        ]
         color: isPriceSame ? "black" : "red"
     }
 

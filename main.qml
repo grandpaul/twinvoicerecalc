@@ -25,6 +25,7 @@ Window {
 
     TaiwanInvoiceReverseCalculator {
         anchors.fill: parent
+        forwardMode: false
     }
 
 }
