@@ -267,17 +267,24 @@ Image {
                ]
         delegate: Item {
             id: itemDelegate
-            anchors.fill: parent
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
+            y: modelData.y * parent.height
+            height: 0.055 * parent.height
             property var itemCount: itemCount1
             property var itemUnitPrice: itemUnitPrice1
             property var itemTotalPrice: itemTotalPrice1
 
             TextInput {
                 id: itemName1
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                }
                 x: 0.05125 * parent.width
-                y: modelData.y * parent.height
                 width: 0.239 * parent.width
-                height: 0.055 * parent.height
 
                 font.pixelSize: 0.7 * Math.min(width, height)
                 horizontalAlignment: Text.AlignLeft
@@ -286,10 +293,12 @@ Image {
 
             TextInput {
                 id: itemCount1
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                }
                 x: 0.2975 * parent.width
-                y: modelData.y * parent.height
                 width: 0.0875 * parent.width
-                height: 0.055 * parent.height
 
                 font.pixelSize: 0.7 * Math.min(width, height)
                 horizontalAlignment: Text.AlignRight
@@ -298,10 +307,12 @@ Image {
 
             TextInput {
                 id: itemUnitPrice1
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                }
                 x: 0.397 * parent.width
-                y: modelData.y * parent.height
                 width: 0.0875 * parent.width
-                height: 0.055 * parent.height
 
                 font.pixelSize: 0.7 * Math.min(width, height)
                 horizontalAlignment: Text.AlignRight
@@ -310,10 +321,12 @@ Image {
 
             Text {
                 id: itemTotalPrice1
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                }
                 x: 0.49625 * parent.width
-                y: modelData.y * parent.height
                 width: 0.16875 * parent.width
-                height: 0.055 * parent.height
 
                 text: {
                     if (!(itemUnitPrice1.text) || (!itemCount1.text)) {
