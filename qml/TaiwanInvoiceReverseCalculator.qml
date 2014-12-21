@@ -145,10 +145,11 @@ Image {
                 : Math.ceil(number);
             }
 
-            property var bestAnswer: null
-            property var bestAnswerMin: Infinity
-            property var bestAnswerMinSum: Infinity
-            onClicked: {
+            function correctUnitPrices() {
+                var bestAnswer = null;
+                var bestAnswerMin = Infinity;
+                var bestAnswerMinSum = Infinity;
+
                 var anso=new Array(itemTable.count);
                 var ans=new Array(itemTable.count);
                 var itemunitprices = new Array(itemTable.count);
@@ -166,9 +167,6 @@ Image {
                     itemcounts[i] = parseInt(itemTable.itemAt(i).itemCount.text);
                 }
 
-                bestAnswer = null;
-                bestAnswerMin = Infinity;
-                bestAnswerMinSum = Infinity;
                 for (var i=0; i>=0; ) {
                     if (i>=ans.length) {
                         // check if valid
@@ -252,6 +250,10 @@ Image {
                         itemunitprices[i].text = parseInt(itemunitprices[i].text) + bestAnswer[i];
                     }
                 }
+	    }
+
+            onClicked: {
+                correctUnitPrices();
             }
         }
     }
