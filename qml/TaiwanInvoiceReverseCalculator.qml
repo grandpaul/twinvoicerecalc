@@ -346,6 +346,26 @@ Image {
         }
     }
 
+    Image {
+        id: columnsCancelMarkImage
+        source: "../image/columns_cancel_mark.svg"
+        x: 0.49625 * parent.width
+	y: 0.652 * parent.height - height
+        width: 0.16875 * parent.width
+	property int itemTableCount: {
+	    var ret1=0;
+	    for (var i=0; i<itemTable.count; i++) {
+	        var item = itemTable.itemAt(i);
+	        if (item.itemTotalPrice.text != "") {
+		    ret1=i+1;
+		}
+	    }
+	    return ret1;
+	}
+	height: 0.300 * parent.height * (itemTable.count - itemTableCount) / itemTable.count
+	visible: itemTableCount == itemTable.count ? false : true
+    }
+
     Text {
         id: itemTotalPriceSum
         x: 0.49625 * parent.width
