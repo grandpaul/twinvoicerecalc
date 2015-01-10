@@ -42,6 +42,70 @@ Image {
         }
     }
 
+    Rectangle {
+        x: 0.48625 * parent.width
+        y: 0.082 * parent.height
+        width: 0.0425 * parent.width
+        height: 0.032 * parent.height
+	color: "white"
+        ChineseNumberText {
+            anchors.fill: parent
+            num: {
+                var now = new Date();
+                return Math.floor(now.getMonth()/2)*2+1;
+            }
+        }
+    }
+
+    Rectangle {
+        x: 0.5575 * parent.width
+        y: 0.082 * parent.height
+        width: 0.04375 * parent.width
+        height: 0.032 * parent.height
+	color: "white"
+        ChineseNumberText {
+            anchors.fill: parent
+            num: {
+                var now = new Date();
+                return Math.floor(now.getMonth()/2)*2+2;
+            }
+        }
+    }
+
+    Rectangle {
+        x: 0.3938 * parent.width
+        y: 0.082 * parent.height
+        width: 0.06625 * parent.width
+        height: 0.032 * parent.height
+	color: "white"
+        ChineseNumberText {
+            anchors.fill: parent
+            num: {
+                var now = new Date();
+                return now.getFullYear()-1911;
+            }
+        }
+    }
+
+    Rectangle {
+        x: 0.57125 * parent.width
+        y: 0.19 * parent.height
+        width: 0.035 * parent.width
+        height: 0.03 * parent.height
+	color: "white"
+        Text {
+            id: dateYear
+	    anchors.fill: parent
+            text: {
+                var now = new Date();
+                return now.getFullYear()-1911;
+            }
+            font.pixelSize: Math.min(width, height)
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
+
     Text {
         id: dateMonth
         x: 0.6375 * parent.width
