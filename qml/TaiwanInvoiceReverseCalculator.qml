@@ -173,6 +173,30 @@ Image {
         ]
     }
 
+    Repeater {
+        id: vendorVAT
+	model: [
+	    { x: 0.16 },
+	    { x: 0.195 },
+	    { x: 0.23 },
+	    { x: 0.265 },
+	    { x: 0.30 },
+	    { x: 0.335 },
+	    { x: 0.37 },
+	    { x: 0.405 }
+	]
+        delegate: TextInput {
+            id: vendorVAT1
+            x: modelData.x * parent.width
+            y: 0.19 * parent.height
+            width: 0.02625 * parent.width
+            height: 0.042 * parent.height
+            font.pixelSize: Math.min(width, height)
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+	}
+    }
+
     Image {
         id: stampImage
         x: 0.68 * parent.width
