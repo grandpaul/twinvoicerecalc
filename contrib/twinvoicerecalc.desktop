@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Taiwan Invoice ReCalculator
+Name[zh_TW]=台灣三聯式發票逆算器
+Comment=Perform Taiwan Invoice Reverse Calculation
+Comment[zh_TW]=台灣三聯式發票逆向計算
+Keywords=calculation;arithmetic;scientific;financial;
+Exec=qmlscene /usr/share/twinvoicerecalc/main.qml
+Icon=/usr/share/pixmaps/twinvoicerecalc.svg
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Utility;Calculator;
